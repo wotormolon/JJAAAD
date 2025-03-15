@@ -1,20 +1,14 @@
-import subprocess
-import sys
+from install_packages import install
 
-# Function to install packages if not already installed
-def install(package):
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.run([sys.executable, "-m", "pip", "install", package])
-
-# List of required packages
-required_packages = ["google-generativeai", "Pillow"]
+# Mapping package names to their import names
+required_packages = {
+    "google-generativeai": "google.generativeai",
+    "Pillow": "PIL"
+}
 
 # Install missing packages
-for package in required_packages:
-    install(package)
-
+for package_name, import_name in required_packages.items():
+    install(import_name)
 
 import google.generativeai as genai
 from PIL import Image
