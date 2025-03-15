@@ -53,8 +53,8 @@ def analyze():
         image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         image_file.save(image_path)
 
-        # Analyze image
-        description = analyze_image(image_path, "")
+        # Analyze image THE PROMPT GOES HERE
+        description = analyze_image(image_path, "In very short dotpoints, describe when and where parking is available, as well as the sign direction and times")
 
         return f'''
         <!doctype html>
