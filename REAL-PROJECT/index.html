@@ -5,13 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parking Sign Identifier</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
     <div class="app-container">
         <div class="card">
             <h1 class="title" id="title">Parking Sign Identifier</h1>
+
             <label for="language" class="label" id="selectLanguage">Select Language</label>
             <select id="language" class="dropdown">
                 <option value="en">English (Default)</option>
@@ -26,20 +28,31 @@
 
             <!-- Upload Section -->
             <div class="upload-section">
-                <label class="upload-box">
+                <label class="upload-box" id="drop-area">
                     <input type="file" id="fileInput" accept="image/*">
                     <span id="chooseFile">Choose File</span>
                 </label>
             </div>
 
+            <!-- Image Placeholder Box -->
             <div class="image-placeholder" id="imagePlaceholder">No Image Selected</div>
+
+            <!-- Image Container (Initially Hidden) -->
             <div class="image-container" id="imageContainer"></div>
 
+            <!-- Analysis Button (Below Image) -->
             <button class="analyze-button" id="analyzeButton" disabled>Start Analysis</button>
+
+            <!-- Label for Dynamic Text (Under Image) -->
             <label class="text-label" id="outputText">Waiting for analysis...</label>
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="script.js"></script>
+    <!-- Recommendations Navigation Button -->
+    <button class="recommendations-btn" id="recommendationsButton" onclick="goToRecommendations()">
+    → Our Recommendations
+    </button>
+
 </body>
 </html>

@@ -138,45 +138,5 @@ analyzeButton.addEventListener("click", function () {
 
 // Function to navigate to the recommendations page
 function goToRecommendations() {
-    window.location.href = "recommendations.html";
+    window.location.href = "index2.html";
 }
-
-document.getElementById("fileInput").addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-        document.getElementById("imagePlaceholder").style.display = "none";
-        const reader = new FileReader();
-        reader.onload = function () {
-            document.getElementById("imageContainer").innerHTML = `<img src="${reader.result}" alt="Uploaded Image">`;
-            document.getElementById("imageContainer").style.display = "block";
-            document.getElementById("analyzeButton").disabled = false;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-document.getElementById("analyzeButton").addEventListener("click", function () {
-    const fileInput = document.getElementById("fileInput").files[0];
-    if (!fileInput) return;
-
-    const formData = new FormData();
-    formData.append("file", fileInput);
-
-    document.getElementById("outputText").innerText = "Analyzing...";
-
-    fetch("/analyze", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("outputText").innerText = data.description;
-        if (data.image_url) {
-            document.getElementById("imageContainer").innerHTML = `<img src="${data.image_url}" alt="Analyzed Image">`;
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        document.getElementById("outputText").innerText = "Error analyzing image.";
-    });
-});
