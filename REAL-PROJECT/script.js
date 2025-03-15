@@ -129,6 +129,12 @@ fileInput.addEventListener("change", function () {
     }
 });
 
+// Function to dynamically adjust text box height
+function adjustTextBoxHeight() {
+    outputText.style.height = "auto"; // Reset height
+    outputText.style.height = outputText.scrollHeight + "px"; // Set new height dynamically
+}
+
 // Handle analysis button click
 analyzeButton.addEventListener("click", function () {
     const file = fileInput.files[0];
@@ -137,7 +143,8 @@ analyzeButton.addEventListener("click", function () {
         return;
     }
 
-    outputText.innerText = translations[languageSelector.value].analyzing;
+    outputText.innerText = "Analyzing...";
+    adjustTextBoxHeight();
 
     const formData = new FormData();
     formData.append("file", file);
@@ -151,12 +158,14 @@ analyzeButton.addEventListener("click", function () {
         if (data.error) {
             outputText.innerText = "Error: " + data.error;
         } else {
-            outputText.innerText = `${translations[languageSelector.value].analysisComplete}\nDescription: ${data.description}\nGPS: ${data.gps}`;
+            outputText.innerText = `Analysis complete!\n\nDescription:\n${data.description}\n\nGPS: ${data.gps}`;
         }
+        adjustTextBoxHeight();
     })
     .catch(error => {
         console.error("Error:", error);
         outputText.innerText = "Analysis failed.";
+        adjustTextBoxHeight();
     });
 });
 
