@@ -3,7 +3,8 @@ from install_packages import install
 # Mapping package names to their import names
 required_packages = {
     "google-generativeai": "google.generativeai",
-    "Pillow": "PIL"
+    "Pillow": "PIL",
+    "pymongo": "pymongo"
 }
 
 # Install missing packages
