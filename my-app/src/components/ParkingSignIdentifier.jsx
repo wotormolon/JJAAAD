@@ -1,59 +1,58 @@
-import React, { useState } from "react";
-import "./ParkingSignIdentifier.css";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Sign Identifier</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
 
-const ParkingSignIdentifier = () => {
-  const [image, setImage] = useState(null);
-  const [outputText, setOutputText] = useState("Waiting for analysis...");
+    <div class="app-container">
+        <div class="card">
+            <h1 class="title" id="title">Parking Sign Identifier</h1>
 
-  // Handle file upload
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImage(reader.result);
-        setOutputText("Analyzing image..."); // Placeholder text for AI analysis
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+            <label for="language" class="label" id="selectLanguage">Select Language</label>
+            <select id="language" class="dropdown">
+                <option value="en">English (Default)</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="zh">Chinese (中文)</option>
+                <option value="ko">Korean (한국어)</option>
+                <option value="ja">Japanese (日本語)</option>
+                <option value="hi">Hindi (हिन्दी)</option>
+                <option value="si">Sinhala (සිංහල)</option>
+            </select>
 
-  return (
-    <div className="app-container">
-      <div className="card">
-        {/* Title */}
-        <h1 className="title">Parking Sign Identifier</h1>
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <label class="upload-box" id="drop-area">
+                    <input type="file" id="fileInput" accept="image/*">
+                    <span id="chooseFile">Choose File</span>
+                </label>
+            </div>
 
-        {/* Language Selector */}
-        <label htmlFor="language" className="label">Select Language</label>
-        <select id="language" className="dropdown">
-          <option>English (Default)</option>
-          <option>Spanish</option>
-          <option>French</option>
-        </select>
+            <!-- Image Placeholder Box -->
+            <div class="image-placeholder" id="imagePlaceholder">No Image Selected</div>
 
-        {/* Upload Section */}
-        <div className="upload-section">
-          <label className="upload-box">
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            <span>Choose File</span>
-          </label>
+            <!-- Image Container (Initially Hidden) -->
+            <div class="image-container" id="imageContainer"></div>
+
+            <!-- Analysis Button (Below Image) -->
+            <button class="analyze-button" id="analyzeButton" disabled>Start Analysis</button>
+
+            <!-- Label for Dynamic Text (Under Image) -->
+            <label class="text-label" id="outputText">Waiting for analysis...</label>
         </div>
-
-        {/* Placeholder Box (Shows Uploaded Image Dynamically) */}
-        <div className="placeholder-box">
-          {image ? (
-            <img src={image} alt="Uploaded" className="uploaded-image" />
-          ) : (
-            "No Image Selected"
-          )}
-        </div>
-
-        {/* Dynamic Text Label (Updates when Image is Uploaded) */}
-        <label className="text-label">{outputText}</label>
-      </div>
     </div>
-  );
-};
 
-export default ParkingSignIdentifier;
+    <script src="script.js"></script>
+    <!-- Recommendations Navigation Button -->
+    <button class="recommendations-btn" id="recommendationsButton" onclick="goToRecommendations()">
+    → Our Recommendations
+    </button>
+
+</body>
+</html>
