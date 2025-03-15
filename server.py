@@ -17,6 +17,11 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+@app.route("/", methods=["GET"])
+def home():
+    """Default homepage for the API."""
+    return jsonify({"message": "Welcome to the Flask Image Analysis API"}), 200
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     """Upload an image and analyze it using Gemini API."""
