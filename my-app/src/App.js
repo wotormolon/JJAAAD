@@ -1,12 +1,13 @@
-import React from "react";
+import logo from './logo.svg';
+import './App.css';
 import ParkingSignIdentifier from "./components/ParkingSignIdentifier";
 
 function App() {
   return (
     <div>
-      <ParkingSignIdentifier />
+      <ParkingSignIdentifier/>
     </div>
   );
 }
 
-export default App;
+export default App; 
