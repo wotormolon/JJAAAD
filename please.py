@@ -25,6 +25,7 @@ def analyze_image(image_path, prompt):
             )
         
         return response.text.strip() if response.text else "No description available."
+    
     except Exception as err:
         print(f"❌ Gemini API Error: {err}")
         return "Failed to analyze image."

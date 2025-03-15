@@ -82,7 +82,10 @@ def analyze():
         }
 
         # Insert into MongoDB
-        collection.insert_one(document)
+        if description == "THAT IS NOT A PARKING SIGN" :
+            pass
+        else:
+            collection.insert_one(document)
 
         return f'''
         <!doctype html>
