@@ -69,7 +69,7 @@ def analyze():
         gps_info = get_gps_info(exif_data) if exif_data else None
 
         # Analyze image with Gemini AI
-        description = analyze_image(image_path, "In very short dotpoints, describe when and where parking is available, as well as the sign direction and times. If image is not a parking sign, please return 'THAT IS NOT A FUCKING PARKING SIGN'")
+        description = analyze_image(image_path, "In very short dotpoints, describe when and where parking is available, as well as the sign direction and times. If image is not a parking sign, please return 'THAT IS NOT A PARKING SIGN'")
 
         # Prepare MongoDB document
         document = {
