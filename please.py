@@ -20,15 +20,19 @@ genai.configure(api_key="AIzaSyDzuQTCml69JzMvKv3jrzOdLKMc5XSUgdI")
 
 # Analyze the image
 def analyze_image(image_path, prompt):
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-    
-    with Image.open(image_path) as img:
-        response = model.generate_content(
-            [prompt, img],
-            stream=False
-        )
-    
-    return response.text
+    try:
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        
+        with Image.open(image_path) as img:
+            response = model.generate_content(
+                [prompt, img],
+                stream=False
+            )
+        
+        return response.text
+    except Exception as err:
+        print(err)
+        return None
 
 # Example usage
 # currently creates an array of image paths from the local folder, picks the first one
