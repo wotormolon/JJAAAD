@@ -1,5 +1,7 @@
 import google.generativeai as genai
 from PIL import Image
+import os
+from glob import glob
 
 # Initialize Gemini API
 genai.configure(api_key="AIzaSyDzuQTCml69JzMvKv3jrzOdLKMc5XSUgdI")
@@ -17,7 +19,9 @@ def analyze_image(image_path, prompt):
     return response.text
 
 # Example usage
-image_path = "C:/Users/2ansg/OneDrive/Desktop/2025/Unihack/JJAAAD/helpp.png"
+# currently creates an array of image paths from the local folder, picks the first one
+image_files = glob(os.path.join(os.path.dirname(__file__), "*.png"))
+image_path = image_files[0]
 prompt = "Can you tell me what the sign means"
 result = analyze_image(image_path, prompt)
 print("Analysis Result:", result)
