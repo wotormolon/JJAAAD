@@ -1,22 +1,11 @@
-from install_packages import install
-
-# Mapping package names to their import names
-required_packages = {
-    "google-generativeai": "google.generativeai",
-    "Pillow": "PIL"
-}
-
-# Install missing packages
-for package_name, import_name in required_packages.items():
-    install(import_name)
-
 import google.generativeai as genai
 from PIL import Image
 import os
-from glob import glob
+from dotenv import load_dotenv
 
-# Initialize Gemini API
-genai.configure(api_key="AIzaSyDzuQTCml69JzMvKv3jrzOdLKMc5XSUgdI")
+# Load environment variables
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # Analyze the image
 def analyze_image(image_path, prompt):
@@ -29,15 +18,7 @@ def analyze_image(image_path, prompt):
                 stream=False
             )
         
-        return response.text
+        return response.text.strip() if response.text else "No description available."
     except Exception as err:
-        print(err)
-        return None
-
-# Example usage
-# currently creates an array of image paths from the local folder, picks the first one
-image_files = glob(os.path.join(os.path.dirname(__file__), "*.png"))
-image_path = image_files[0]
-prompt = "Can you tell me what the sign means"
-result = analyze_image(image_path, prompt)
-print("Analysis Result:", result)
+        print(f"❌ Gemini API Error: {err}")
+        return "Failed to analyze image."
