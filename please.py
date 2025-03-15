@@ -5,7 +5,13 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
+# Configure Gemini API correctly
+API_KEY = os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    raise ValueError("❌ ERROR: GEMINI_API_KEY is not set. Add it to the .env file.")
+
+genai.configure(api_key=API_KEY)
 
 # Analyze the image
 def analyze_image(image_path, prompt):

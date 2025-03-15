@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -19,8 +19,25 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 @app.route("/", methods=["GET"])
 def home():
-    """Default homepage for the API."""
-    return jsonify({"message": "Welcome to the Flask Image Analysis API"}), 200
+    """Serve an HTML upload form."""
+    return '''
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Upload Image for Analysis</title>
+    </head>
+    <body>
+        <h2>Upload an Image for Analysis</h2>
+        <form action="/analyze" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <br><br>
+            <button type="submit">Upload</button>
+        </form>
+    </body>
+    </html>
+    '''
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -39,8 +56,23 @@ def analyze():
         # Analyze image
         description = analyze_image(image_path, "")
 
-        return jsonify({"description": description})
-
+        return f'''
+        <!doctype html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Image Analysis Result</title>
+        </head>
+        <body>
+            <h2>Image Analysis Result</h2>
+            <p><strong>Description:</strong> {description}</p>
+            <br>
+            <a href="/">Upload Another Image</a>
+        </body>
+        </html>
+        '''
+    
     except Exception as err:
         print(err)
         return jsonify({"error": str(err)}), 500
