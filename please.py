@@ -18,6 +18,6 @@ def analyze_image(image_path, prompt):
 
 # Example usage
 image_path = "C:/Users/2ansg/OneDrive/Desktop/2025/Unihack/JJAAAD/helpp.png"
-prompt = "Describe the objects in this image."
+prompt = "Can you tell me what the sign means"
 result = analyze_image(image_path, prompt)
 print("Analysis Result:", result)
