@@ -1,6 +1,6 @@
-// import logo from './logo.svg';
-// import './App.css';
-// import StreetSignIdentifier from "./components/StreetSignIdentifier";
+import logo from './logo.svg';
+import './App.css';
+import ParkingSignIdentifier from "./components/ParkingSignIdentifier";
 
 
 // function App() {
@@ -26,15 +26,12 @@
 
 // export default App;
 
-import React from "react";
-import ParkingSignIdentifier from "./components/ParkingSignIdentifier";
-
 function App() {
   return (
     <div>
-      <ParkingSignIdentifier />
+      <ParkingSignIdentifier/>
     </div>
   );
 }
 
-export default App;
+export default App; 
