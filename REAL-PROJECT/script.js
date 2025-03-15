@@ -100,43 +100,67 @@ const translations = {
 // Function to change text based on selected language
 function changeLanguage() {
     const selectedLang = languageSelector.value;
+
     document.getElementById("title").innerText = translations[selectedLang].title;
     document.getElementById("selectLanguage").innerText = translations[selectedLang].selectLanguage;
     document.getElementById("chooseFile").innerText = translations[selectedLang].chooseFile;
     analyzeButton.innerText = translations[selectedLang].startAnalysis;
     imagePlaceholder.innerText = translations[selectedLang].noImage;
     outputText.innerText = translations[selectedLang].waitingAnalysis;
-    recommendationButton.innerText = translations[selectedLang].recommendations; // Update recommendation button text
+    recommendationButton.innerText = translations[selectedLang].recommendations;
 }
 
-// Language change event listener
+// Add event listener for language change
 languageSelector.addEventListener("change", changeLanguage);
 
-// Function to handle file selection and display image
+// Handle file selection
 fileInput.addEventListener("change", function () {
     const file = fileInput.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-            imagePlaceholder.style.display = "none"; // Hide placeholder
+            imagePlaceholder.style.display = "none";
             imageContainer.innerHTML = `<img src="${reader.result}" alt="Uploaded Image">`;
             imageContainer.style.display = "block";
-            analyzeButton.disabled = false; // Enable button
+            analyzeButton.disabled = false;
             outputText.innerText = translations[languageSelector.value].waitingAnalysis;
         };
         reader.readAsDataURL(file);
     }
 });
 
-// Function to handle analysis simulation
+// Handle analysis button click
 analyzeButton.addEventListener("click", function () {
+    const file = fileInput.files[0];
+    if (!file) {
+        outputText.innerText = "No file selected.";
+        return;
+    }
+
     outputText.innerText = translations[languageSelector.value].analyzing;
-    setTimeout(() => {
-        outputText.innerText = translations[languageSelector.value].analysisComplete;
-    }, 2000);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            outputText.innerText = "Error: " + data.error;
+        } else {
+            outputText.innerText = `${translations[languageSelector.value].analysisComplete}\nDescription: ${data.description}\nGPS: ${data.gps}`;
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        outputText.innerText = "Analysis failed.";
+    });
 });
 
-// Function to navigate to the recommendations page
+// Function to navigate to recommendations page
 function goToRecommendations() {
     window.location.href = "index2.html";
 }

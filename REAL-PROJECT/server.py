@@ -145,23 +145,138 @@
 
 # if __name__ == "__main__":
 #     app.run(debug=True, host="0.0.0.0", port=5000)
+# ##
+# import os
+# from flask import Flask, jsonify, request
+# from flask_cors import CORS
+# from werkzeug.utils import secure_filename
+# from dotenv import load_dotenv
+# from please import analyze_image  # Importing from please.py
+# from geoloc import get_exif_data, get_gps_info  # Import GPS extraction functions
+# from pymongo import MongoClient, GEOSPHERE
+
+# # Load environment variables
+# load_dotenv()
+
+# # Initialize Flask app
+# app = Flask(__name__)
+# CORS(app)  # Allow frontend access
+
+# # Ensure uploads folder exists
+# UPLOAD_FOLDER = "uploads"
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# # Connect to MongoDB
+# MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+# client = MongoClient(MONGO_URI)
+# db = client["parking_signs_db"]
+# collection = db["scanned_signs"]
+
+# # Ensure geospatial index on location
+# collection.create_index([("location", GEOSPHERE)])
+
+# @app.route("/analyze", methods=["POST"])
+# def analyze():
+#     """Upload an image, analyze it, extract GPS coordinates, and store it in MongoDB."""
+#     try:
+#         if "file" not in request.files:
+#             return jsonify({"error": "No file uploaded"}), 400
+
+#         image_file = request.files["file"]
+
+#         # Secure filename
+#         filename = secure_filename(image_file.filename)
+#         image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+#         image_file.save(image_path)
+
+#         # Extract GPS coordinates dynamically from the uploaded image
+#         exif_data = get_exif_data(image_path)
+#         gps_info = get_gps_info(exif_data) if exif_data else None
+
+#         # Analyze image with Gemini AI
+#         description = analyze_image(
+#             image_path,
+#             "In very short dotpoints, describe when and where parking is available, as well as the sign direction and times. If image is not a parking sign, please return 'THAT IS NOT A PARKING SIGN'"
+#         )
+
+#         # Prepare MongoDB document
+#         document = {
+#             "image_path": image_path,
+#             "description": description,
+#             "location": {
+#                 "type": "Point",
+#                 "coordinates": [gps_info["longitude"], gps_info["latitude"]]
+#             } if gps_info else None
+#         }
+
+#         # Insert into MongoDB only if it's a valid parking sign
+#         if description != "THAT IS NOT A PARKING SIGN":
+#             collection.insert_one(document)
+
+#         return jsonify({
+#             "description": description,
+#             "gps": gps_info if gps_info else "No GPS data available"
+#         })
+
+#     except Exception as err:
+#         print(err)
+#         return jsonify({"error": str(err)}), 500
+
+# @app.route("/search", methods=["GET"])
+# def search_nearby_signs():
+#     """Find parking signs near a given location within a max distance (meters)."""
+#     latitude = request.args.get("latitude", type=float)
+#     longitude = request.args.get("longitude", type=float)
+#     max_distance = request.args.get("max_distance", default=500, type=int)
+
+#     if not latitude or not longitude:
+#         return jsonify({"error": "Latitude and longitude are required"}), 400
+
+#     query = {
+#         "location": {
+#             "$near": {
+#                 "$geometry": {
+#                     "type": "Point",
+#                     "coordinates": [longitude, latitude]
+#                 },
+#                 "$maxDistance": max_distance
+#             }
+#         }
+#     }
+
+#     results = collection.find(query)
+#     response = [
+#         {
+#             "image_path": doc["image_path"],
+#             "description": doc["description"],
+#             "location": doc["location"]
+#         }
+#         for doc in results
+#     ]
+
+#     return jsonify(response)
+
+# if __name__ == "__main__":
+#     app.run(debug=True, host="0.0.0.0", port=5000)
 
 import os
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from pymongo import MongoClient, GEOSPHERE
 from dotenv import load_dotenv
-from please import analyze_image
-from geoloc import get_exif_data, get_gps_info
+from please import analyze_image  # Importing from please.py
+from geoloc import get_exif_data, get_gps_info  # Import GPS extraction functions
+from pymongo import MongoClient, GEOSPHERE
 
 # Load environment variables
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__, static_folder="static", template_folder="templates")
-CORS(app)
+app = Flask(__name__, static_folder=".", static_url_path="")  # Serve index.html from the root
+CORS(app)  # Enable CORS for front-end requests
 
+# Ensure uploads folder exists
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -171,43 +286,101 @@ MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 client = MongoClient(MONGO_URI)
 db = client["parking_signs_db"]
 collection = db["scanned_signs"]
+
+# Ensure geospatial index on location
 collection.create_index([("location", GEOSPHERE)])
 
+# Serve the front-end (index.html and static files)
 @app.route("/")
-def home():
-    return render_template("index.html")
+def serve_index():
+    return send_from_directory(".", "index.html")
 
-@app.route("/uploads/<filename>")
-def uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+@app.route("/<path:path>")
+def serve_static(path):
+    return send_from_directory(".", path)
 
+# API: Handle image analysis
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    if "file" not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
+    """Upload an image, analyze it, extract GPS coordinates, and store it in MongoDB."""
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
 
-    image_file = request.files["file"]
-    filename = secure_filename(image_file.filename)
-    image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-    image_file.save(image_path)
+        image_file = request.files["file"]
 
-    exif_data = get_exif_data(image_path)
-    gps_info = get_gps_info(exif_data) if exif_data else None
-    description = analyze_image(image_path, "Describe the parking sign in short dot points.")
+        # Secure filename
+        filename = secure_filename(image_file.filename)
+        image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        image_file.save(image_path)
 
-    document = {
-        "image_path": f"/uploads/{filename}",
-        "description": description,
+        # Extract GPS coordinates dynamically from the uploaded image
+        exif_data = get_exif_data(image_path)
+        gps_info = get_gps_info(exif_data) if exif_data else None
+
+        # Analyze image with Gemini AI
+        description = analyze_image(
+            image_path,
+            "In very short dotpoints, describe when and where parking is available, as well as the sign direction and times. If image is not a parking sign, please return 'THAT IS NOT A PARKING SIGN'"
+        )
+
+        # Prepare MongoDB document
+        document = {
+            "image_path": image_path,
+            "description": description,
+            "location": {
+                "type": "Point",
+                "coordinates": [gps_info["longitude"], gps_info["latitude"]]
+            } if gps_info else None
+        }
+
+        # Insert into MongoDB only if it's a valid parking sign
+        if description != "THAT IS NOT A PARKING SIGN":
+            collection.insert_one(document)
+
+        return jsonify({
+            "description": description,
+            "gps": gps_info if gps_info else "No GPS data available"
+        })
+
+    except Exception as err:
+        print(err)
+        return jsonify({"error": str(err)}), 500
+
+# API: Search for nearby signs
+@app.route("/search", methods=["GET"])
+def search_nearby_signs():
+    """Find parking signs near a given location within a max distance (meters)."""
+    latitude = request.args.get("latitude", type=float)
+    longitude = request.args.get("longitude", type=float)
+    max_distance = request.args.get("max_distance", default=500, type=int)
+
+    if not latitude or not longitude:
+        return jsonify({"error": "Latitude and longitude are required"}), 400
+
+    query = {
         "location": {
-            "type": "Point",
-            "coordinates": [gps_info["longitude"], gps_info["latitude"]]
-        } if gps_info else None
+            "$near": {
+                "$geometry": {
+                    "type": "Point",
+                    "coordinates": [longitude, latitude]
+                },
+                "$maxDistance": max_distance
+            }
+        }
     }
 
-    if description != "THAT IS NOT A PARKING SIGN":
-        collection.insert_one(document)
+    results = collection.find(query)
+    response = [
+        {
+            "image_path": doc["image_path"],
+            "description": doc["description"],
+            "location": doc["location"]
+        }
+        for doc in results
+    ]
 
-    return jsonify({"description": description, "image_url": f"/uploads/{filename}", "gps": gps_info})
+    return jsonify(response)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
