@@ -282,7 +282,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Connect to MongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongo:KbeZEYrdTLEwTxdXYjIxlGoadDoiJyMt@maglev.proxy.rlwy.net:25823")
 client = MongoClient(MONGO_URI)
 db = client["parking_signs_db"]
 collection = db["scanned_signs"]
