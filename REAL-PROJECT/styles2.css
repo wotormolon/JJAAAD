@@ -1,4 +1,4 @@
-/* General Page Styling */
+/* General Page Styles */
 body {
     font-family: 'Arial', sans-serif;
     text-align: center;
@@ -6,52 +6,119 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
+    padding: 20px; /* Ensure spacing on mobile */
 }
 
-/* Recommendations Page Container */
-.recommendations-container {
+/* Main App Container */
+.recommendation-container {
     background-color: white;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    max-width: 350px;
+    width: 100%;
+    margin: 20px;
+    position: relative;
 }
 
-/* Title Styling */
-.recommendations-title {
-    font-size: 24px;
-    font-weight: bold;
+/* Heading */
+h2 {
     color: #2f7732;
+    font-size: 22px;
+    margin-bottom: 10px;
 }
 
-/* Recommendation Content */
-.recommendation-content {
-    text-align: left;
-    margin: 20px 0;
+/* Description Text */
+p {
+    font-size: 14px;
     color: #333;
+    margin-bottom: 15px;
 }
 
-.recommendation-content ul {
-    padding-left: 20px;
+/* Input Label */
+label {
+    font-size: 14px;
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: left;
 }
 
-.recommendation-content li {
-    margin: 10px 0;
+/* Input Fields */
+.input-box {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    display: block;
+    text-align: left;
 }
 
-/* Back Button Styling */
-.back-button {
+/* Date-Time Picker */
+#datetime {
+    width: calc(100% - 20px);
+}
+
+/* Location Dropdown */
+#location {
+    width: calc(100% - 20px);
+}
+
+/* Button Styling */
+button {
     background-color: #2f7732;
     color: white;
     border: none;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 16px;
+    padding: 10px;
+    margin-top: 15px;
     cursor: pointer;
+    border-radius: 5px;
+    width: calc(100% - 20px);
+    font-size: 14px;
+    font-weight: bold;
 }
 
-.back-button:hover {
-    background-color: #225522;
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Interactive Map */
+#map {
+    height: 300px;
+    margin-top: 15px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+/* Back Button */
+.back-btn {
+    margin-top: 15px;
+    background-color: #2f7732;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    text-decoration: none;
+    display: inline-block;
+    width: calc(100% - 20px);
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Mobile-Friendly Adjustments */
+@media (max-width: 480px) {
+    .recommendation-container {
+        width: 90%;
+    }
+    
+    .input-box, button, .back-btn {
+        width: 100%;
+    }
 }
