@@ -158,7 +158,7 @@ analyzeButton.addEventListener("click", function () {
         if (data.error) {
             outputText.innerText = "Error: " + data.error;
         } else {
-            outputText.innerText = `Analysis complete!\n\nDescription:\n${data.description}\n\nGPS: ${data.gps}`;
+            outputText.innerText = `Analysis complete!\n\nDescription:\n${data.description}\n`;
         }
         adjustTextBoxHeight();
     })
